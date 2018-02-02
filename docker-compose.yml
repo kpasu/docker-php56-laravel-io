@@ -1,0 +1,35 @@
+version: '2'
+services:
+
+  # web
+  web:
+    build: ./web
+    ports:
+      - "80:80"
+    volumes:
+      - ./web/src:/var/sync
+      - ./web/log:/var/log/httpd
+      - ./web/tmp:/tmp/local
+      - ./web/files/.env:/var/www/html/laravel/.env
+      - ./web/files/php.ini:/etc/php.ini
+      - ./web/files/httpd.conf:/etc/httpd/conf/httpd.conf
+    command: httpd -DFOREGROUND
+
+  # mysql
+  mysql:
+    build: ./mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/log:/var/log
+      - ./mysql/tmp:/tmp/local
+      - ./mysql/files/my.cnf:/etc/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+
+  # redis
+  redis:
+    image: redis:3.0.7
+    ports:
+      - "6379:6379"
